@@ -12,3 +12,4 @@ C:\Users\ibrah\source\repos\API_Implementation_Client\API_Implementation_Client\
 C:\Users\ibrah\source\repos\API_Implementation_Client\API_Implementation_Client\obj\Debug\net8.0\API_Implementation_Client.pdb
 C:\Users\ibrah\source\repos\API_Implementation_Client\API_Implementation_Client\obj\Debug\net8.0\API_Implementation_Client.genruntimeconfig.cache
 C:\Users\ibrah\source\repos\API_Implementation_Client\API_Implementation_Client\obj\Debug\net8.0\ref\API_Implementation_Client.dll
+C:\Users\ibrah\source\repos\API_Implementation_Client\API_Implementation_Client\obj\Debug\net8.0\API_Implementation_Client.sourcelink.json
