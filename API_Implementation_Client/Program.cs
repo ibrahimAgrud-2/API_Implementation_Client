@@ -135,22 +135,82 @@ class Program
         }
     }
 
+    static async  Task GetStudentByID(int ID)
+    {
+        try
+        {
+            Console.WriteLine("**********Fetching Avr. Grade*********");
+
+            var avr = await myHttpClientObject.GetFromJsonAsync<Student>($"{ID}");
+
+            if (avr != null)
+            {
+                Console.WriteLine("Average Grade is : " + avr.firstName);
+               
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+    }
+
+    //3 farklı dönüş tipi olabilir. Bu nedenli client side'a yani burada bunları daha net görebilemk için bu sefer status code'a göre çıktı verebilriz
+    static async Task GetStudentById(int id)
+    {
+        try
+        {
+            Console.WriteLine("\n_____________________________");
+            Console.WriteLine($"\nFetching student with ID {id}...\n");
+
+            //ilgili Endpoint'a gidip responsu alır.
+            var response = await myHttpClientObject.GetAsync($"{id}");
+
+            //1.kutuda eğer successs kodu ise if içinden devam ederiz
+            if (response.IsSuccessStatusCode)
+            {
+                //Şimdi burad tekrardan server'a gitmeyiz. Server'a zaten yukardaki kodda gittik. burada gelen JSON'u ReadFromJsonAsync fonksiyonu ile Student objesine dönüştürürüz
+                var student = await response.Content.ReadFromJsonAsync<Student>();
+                //Her türlü null dönme ihtimaine karşı kontrol ederiz
+                if (student != null)
+                {
+                    Console.WriteLine($"ID: {student.Id}, Name: {student.firstName}, Age: {student.Age}, Grade: {student.Grade}");
+                }
+            }
+            //Eğer 1.Kutuda badrequest varsa ekrana bu mesajı basarız
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                Console.WriteLine($"Bad Request: Not accepted ID {id}");
+            }
+            //Eğer 1.Kutuda NotFound varsa ekrana bu mesajı basarız
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                Console.WriteLine($"Not Found: Student with ID {id} not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+    }
+
     static async Task Main()
     {
 
 
 
 
-        //myHttpClientObject nesnesi için gitmesi gereken URI'i verdik. Bu şekilde hedef URI veriyoruz
+        /*myHttpClientObject nesnesi için gitmesi gereken URI'i verdik. Bu şekilde hedef URI veriyoruz
         //Burada sadece API'ın genel adresini veririz. Sonra İstedğimiz notkada gereli Endpoint'in URL'lini veririz.
         //Mesela GetAllStudents fonksiyonunda Students'i almak istediğimiz için ilgili endPoint'i verdik.
         //bu URL ve endpoint URL'i önce birleştirilir öyle server'a gider. yani üsteki fonk içinde birleştirilmil link şöyle olur https://localhost:7140/api/RR/StudetnsAndMe
-        //Ayrıca URL adresi şu kurala göre bileştir: Sona ekleme şeklinde olmaz. Onun yerine Eğer BaseAddress sonunda / yoksa, base'in son parçası (segment) atılır ve yerine relative path (fonk içinde verdiğimiz string yani sonradan eklenecek olan) konur.
-        //bizim örneğimizde BaseAddress = https://localhost:7140/api/ ve Relative path RR/StudentsAndMe. BaseAddress sonu / olduğu için direk ekleme olur ve URL https://localhost:7140/api/RR/StudentsAndMe olur. Yani günü sonunda server'a giden URL swagger'de ki gibi olmalı. Nerede oluşturduğu pek öneli değil. istersen buradan direk tüm URL'e ver, istersen sadece Students'e kadar olan kısmı ve geri kalamın istediğin yerde yap
+        Ayrıca URL adresi şu kurala göre bileştir: Sona ekleme şeklinde olmaz. Onun yerine Eğer BaseAddress sonunda / yoksa, base'in son parçası (segment) atılır ve yerine relative path (fonk içinde verdiğimiz string yani sonradan eklenecek olan) konur.
+        bizim örneğimizde BaseAddress = https://localhost:7140/api/ ve Relative path RR/StudentsAndMe. BaseAddress sonu / olduğu için direk ekleme olur ve URL https://localhost:7140/api/RR/StudentsAndMe olur. Yani günü sonunda server'a giden URL swagger'de ki gibi olmalı. Nerede oluşturduğu pek öneli değil. istersen buradan direk tüm URL'e ver, istersen sadece Students'e kadar olan kısmı ve geri kalamın istediğin yerde yap
         myHttpClientObject.BaseAddress = new Uri("https://localhost:7140/api/Students/");
+        */
 
-
-        await GetAverageGrade();
+        await GetStudentByID(1);
     }
 
 }
