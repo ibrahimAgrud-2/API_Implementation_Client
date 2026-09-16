@@ -108,7 +108,33 @@ class Program
             Console.WriteLine(ex);
         }
     }
-   
+
+    static async Task GetAverageGrade()
+    {
+        try
+        {
+            Console.WriteLine("**********Fetching Avr. Grade*********");
+
+            //GetFromJsonAsync - GetFromJsonAsync fonksiyonuda veridimiz değişken türü aslında gelen JSON'un hangi türe dönüştürülmesini söylüyor. yani **`GetFromJsonAsync<T>`'deki `T`, "gelen JSON'u hangi C# tipine dönüştür" talimatıdır** — framework'e "bu JSON'u şu kalıba (tipe) sok" diyorsun. Mesela List<Studnt> olduğunda framework bizim gelen JSON verisin Stundet türünden liste'e çevirmemiz gerektiğini düşünüyor ve ona çeviriypr. Eğer double deseydik bu sefer JSON'dan gelen veriyi double'a çevirirdi. Tabi gelen verini ne olduğunu göz önünde bulundurmalıyız. yani 
+            //Framework, **"bu JSON gerçekten bu tipe uyar mı" * *diye önceden kontrol etmez, sen `T` (değişken türü) olarak ne yazarsan, **o kalıba zorlamaya çalışır.* *Uyumsuzsa, hata(`JsonException`) çalışma zamanında(**runtime * *) patlar.Gidipte JSON'da birden fazla satırdan oluşan veriyi tek bir double değişkenine dönüştürmeye çalışmamalıyız. Ancak tek bir değer geliyorsa o zaman sıkıntı yok. mesela `double avr = await myHttpClientObject.GetFromJsonAsync<double>("Avr");`
+            //- Örneğin `double avr = await GetFromJsonAsync<double>("Students");  // ❌ hata!`
+
+            //Burada** çalışma zamanında * * `JsonException` alırsın, çünkü bir JSON array'i tek bir `double`'a sığdırmaya çalışıyorsun — framework bunu **önceden bilemez * *, sen `T`'yi yanlış seçtiğin an çalıştırıp görürsün.
+            //
+            var avr = await myHttpClientObject.GetFromJsonAsync<double>("AverageGrade");
+                
+            if(avr!=null)
+            {
+                Console.WriteLine("Average Grade is : " + avr);
+            }
+              
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+    }
+
     static async Task Main()
     {
 
@@ -124,7 +150,7 @@ class Program
         myHttpClientObject.BaseAddress = new Uri("https://localhost:7140/api/Students/");
 
 
-        await GetAllStudent();
+        await GetAverageGrade();
     }
 
 }
