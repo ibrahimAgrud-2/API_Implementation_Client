@@ -22,6 +22,20 @@ class Program
         public int Age { get; set; }
         public double Grade { get; set; }
 
+        public Student()
+        {
+
+
+        }
+
+        public Student(int ID,int age,double grade,string firstName,string lastName)
+        {
+            this.firstName = firstName;
+            this.Id = ID;
+            this.Grade = grade;
+            this.Age = age;
+            this.LastName = lastName;
+        }
 
     }
 
@@ -195,7 +209,48 @@ class Program
         }
     }
 
-    static async Task Main()
+    static async Task AddNewStudent(Student student)
+    {
+        try
+        {
+            Console.WriteLine("\n_____________________________");
+            Console.WriteLine("\nAdding a new student...\n");
+
+
+            //response değişkeni(HttpResponseMessage tipi),  3 parçayı birlikte taşıyor:
+            /*
+             1-Response body (yeni student verisi burada), 2-header (URL burada) ve 3-Status code (201 created)
+             
+            Ayırca tüm kısımlar JSON değil. sadece body JSON. Header ve status code düz text'ti ve HTTP'in sorumluluğundadır.
+             */
+            var response = await myHttpClientObject.PostAsJsonAsync("",student);
+
+            if(response.IsSuccessStatusCode)
+            {
+                //eğer gelen respıns başarılı ise yani gerçekten veri varsa gelen response'ran body'i yani JSON'u okuyoruz. Kısacası veriyi alıyoruz.
+                var addedStudent = await response.Content.ReadFromJsonAsync<Student>();
+                Console.WriteLine($"Added Student - ID: {addedStudent.Id}, Name: {addedStudent.firstName}, Age: {addedStudent.Age}, Grade: {addedStudent.Grade}");
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                Console.WriteLine("Bad Request: Invalid student data.");
+            }
+
+
+
+
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+
+    }
+
+
+
+    static async Task Main()    
     {
 
 
@@ -207,10 +262,11 @@ class Program
         //bu URL ve endpoint URL'i önce birleştirilir öyle server'a gider. yani üsteki fonk içinde birleştirilmil link şöyle olur https://localhost:7140/api/RR/StudetnsAndMe
         Ayrıca URL adresi şu kurala göre bileştir: Sona ekleme şeklinde olmaz. Onun yerine Eğer BaseAddress sonunda / yoksa, base'in son parçası (segment) atılır ve yerine relative path (fonk içinde verdiğimiz string yani sonradan eklenecek olan) konur.
         bizim örneğimizde BaseAddress = https://localhost:7140/api/ ve Relative path RR/StudentsAndMe. BaseAddress sonu / olduğu için direk ekleme olur ve URL https://localhost:7140/api/RR/StudentsAndMe olur. Yani günü sonunda server'a giden URL swagger'de ki gibi olmalı. Nerede oluşturduğu pek öneli değil. istersen buradan direk tüm URL'e ver, istersen sadece Students'e kadar olan kısmı ve geri kalamın istediğin yerde yap
-        myHttpClientObject.BaseAddress = new Uri("https://localhost:7140/api/Students/");
+       ;
         */
-
-        await GetStudentByID(1);
+        myHttpClientObject.BaseAddress = new Uri("https://localhost:7140/api/Students/");
+        
+            await AddNewStudent(new Student(1,28,90,"ibi","Tosbik"));
     }
 
 }
