@@ -249,6 +249,48 @@ class Program
     }
 
 
+    static async Task DeleteStudent(int StudentID)
+    {
+        try
+        {
+            Console.WriteLine("\n_____________________________");
+            Console.WriteLine("\n Delete student\n");
+
+
+
+            var response = await myHttpClientObject.DeleteAsync($"{StudentID}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Student Deleted Successfully");
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                Console.WriteLine("Bad Request: Invalid student data.");
+            }
+            else if(response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                Console.WriteLine($"Not Found: Student with ID {StudentID} could not be found.");
+
+            }
+            else
+            {
+                Console.WriteLine("Un");
+            }
+
+
+
+
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+
+    }
+
+
 
     static async Task Main()    
     {
@@ -265,8 +307,13 @@ class Program
        ;
         */
         myHttpClientObject.BaseAddress = new Uri("https://localhost:7140/api/Students/");
-        
-            await AddNewStudent(new Student(1,28,90,"ibi","Tosbik"));
+
+        await GetAllStudent();
+
+    await    DeleteStudent(1);
+
+
+       await GetAllStudent();
     }
 
 }
