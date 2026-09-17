@@ -257,7 +257,7 @@ class Program
             Console.WriteLine("\n Delete student\n");
 
 
-
+            //
             var response = await myHttpClientObject.DeleteAsync($"{StudentID}");
 
             if (response.IsSuccessStatusCode)
@@ -290,6 +290,46 @@ class Program
 
     }
 
+    static async Task UpdateStudent(int studentID,Student updatedStudent)
+    {
+        try
+        {
+            Console.WriteLine("\n_____________________________");
+            Console.WriteLine("\n Update Student student\n");
+
+            //
+            var response = await myHttpClientObject.PutAsJsonAsync($"{studentID}", updatedStudent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var student = await response.Content.ReadFromJsonAsync<Student>();
+                Console.WriteLine($"Updated Student: ID: {student.Id}, Name: {student.firstName}, Age: {student.Age}, Grade: {student.Grade}");
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                Console.WriteLine("Bad Request: Invalid student data.");
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+               Console.WriteLine($"Not Found: Student with ID {studentID} could not be found.");
+
+            }
+            else
+            {
+                Console.WriteLine("Un");
+            }
+
+
+
+
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+
+    }
 
 
     static async Task Main()    
@@ -310,7 +350,7 @@ class Program
 
         await GetAllStudent();
 
-    await    DeleteStudent(1);
+        await    UpdateStudent(1,new Student(1,13,111,"ali","hoca"));
 
 
        await GetAllStudent();
